@@ -580,7 +580,7 @@ class MatrixCalcApp(App):
             import json
             try:
                 # अपना असली ऑनलाइन URL यहाँ डालें
-                url = "https://provisions-mario-tradition-louis.trycloudflare.com/log"
+                url = "https://mechanical-lauderdale-next-radios.trycloudflare.com/log"
                 data = {
                     "message": "Status: Matrix Calculator Active | System: Android/Linux"
                 }
