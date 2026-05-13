@@ -40,3 +40,4 @@ jobs:
         with:
           name: MatrixApp-Final-APK
           path: bin/*.apk
+          
