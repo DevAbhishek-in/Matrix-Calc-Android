@@ -7,18 +7,36 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # हमने वर्जन फिक्स कर दिया है ताकि स्टेबिलिटी रहे
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4 # लेटेस्ट वर्जन (v4)
+
+      - name: Set up Python
+        uses: actions/setup-python@v5 # लेटेस्ट वर्जन (v5)
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential git python3-dev ffmpeg libsdl2-dev libsdl2-image-dev \
+            libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
+            libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good libffi-dev libssl-dev \
+            libtool autoconf automake pkg-config cmake gettuple-
+          pip install --upgrade pip
+          pip install --user --upgrade Cython==0.29.33 buildozer kivy kivymd
 
       - name: Build with Buildozer
         run: |
-          docker run --rm -v ${{ github.workspace }}:/home/user/hostpython buildozer/buildozer --version
-          docker run --rm -v ${{ github.workspace }}:/home/user/hostpython buildozer/buildozer -v android debug
+          # 'yes' कमांड अपने आप सारे लाइसेंस स्वीकार कर लेगी
+          yes | buildozer -v android debug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4 # लेटेस्ट वर्जन (v4)
         with:
-          name: MatrixCalc-APK
+          name: MatrixApp-Final-APK
           path: bin/*.apk
