@@ -7,18 +7,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 # हमने वर्जन फिक्स कर दिया है ताकि स्टेबिलिटी रहे
+    # स्टेबल वर्जन का उपयोग करें
+    runs-on: ubuntu-22.04 
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # लेटेस्ट वर्जन (v4)
+        uses: actions/checkout@v4 # लेटेस्ट v4 का उपयोग (No Deprecation)
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # लेटेस्ट वर्जन (v5)
+        uses: actions/setup-python@v5 # लेटेस्ट v5 का उपयोग
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install System Dependencies
+        # यहाँ हमने उन सभी पैकेजेस को फिक्स किया है जो Exit code 100 दे रहे थे
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -26,18 +28,18 @@ jobs:
             libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
             libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good libffi-dev libssl-dev \
-            libtool autoconf automake pkg-config cmake gettuple-
-          pip install --upgrade pip
+            libtool autoconf automake pkg-config cmake gettext
+          
+          python -m pip install --upgrade pip
           pip install --user --upgrade Cython==0.29.33 buildozer kivy kivymd
 
       - name: Build with Buildozer
         run: |
-          # 'yes' कमांड अपने आप सारे लाइसेंस स्वीकार कर लेगी
+          # 'yes' कमांड लाइसेंस को अपने आप स्वीकार करेगी ताकि प्रोसेस रुके नहीं
           yes | buildozer -v android debug
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4 # लेटेस्ट वर्जन (v4)
+      - name: Upload APK
+        uses: actions/upload-artifact@v4 # लेटेस्ट v4 का उपयोग
         with:
-          name: MatrixApp-Final-APK
+          name: MatrixCalc-Final-APK
           path: bin/*.apk
-          
