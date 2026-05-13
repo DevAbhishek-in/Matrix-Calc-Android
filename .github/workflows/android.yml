@@ -12,20 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
-
       - name: Build with Buildozer
-        uses: ArtemSerebriakov/buildozer-action@v1
-        with:
-          buildozer_version: master
-          command: buildozer -v android debug
-          repository_root: .
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/home/user/hostpython buildozer/buildozer --version
+          docker run --rm -v ${{ github.workspace }}:/home/user/hostpython buildozer/buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: MatrixCalc-APK-${{ steps.get-date.outputs.date }}
+          name: MatrixCalc-APK
           path: bin/*.apk
