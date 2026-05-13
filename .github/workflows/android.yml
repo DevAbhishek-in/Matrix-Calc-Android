@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
 
 env:
-  # Node.js 24 की चेतावनी को शांत करने के लिए
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 # सबसे स्टेबल वर्जन
+    # हमने वापस 22.04 कर दिया है क्योंकि यह ज्यादा स्टेबल है
+    runs-on: ubuntu-22.04 
 
     steps:
       - name: Checkout Code
@@ -23,28 +23,26 @@ jobs:
           python-version: '3.10'
 
       - name: Install System Dependencies
-        # यह वही "बड़ा कोड" है जो सारी कमियों को पूरा करेगा
         run: |
           sudo apt-get update
+          # हमने यहाँ से gstreamer हटा दिया है जो 100 एरर दे रहा था
           sudo apt-get install -y \
             build-essential git python3-dev ffmpeg libsdl2-dev libsdl2-image-dev \
             libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
-            libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev \
-            gstreamer1.0-plugins-base gstreamer1.0-plugins-good libffi-dev libssl-dev \
+            libavformat-dev libavcodec-dev zlib1g-dev libffi-dev libssl-dev \
             libtool autoconf automake pkg-config cmake gettext libltdl-dev
           
           python3 -m pip install --upgrade pip
-          # Cython का वर्जन 3 से कम रखना ज़रूरी है
+          # Cython का वर्जन फिक्स कर दिया है
           pip install --user --upgrade "Cython<3.0" buildozer kivy kivymd
 
       - name: Build with Buildozer
         run: |
-          # 'yes' कमांड अपने आप सारे लाइसेंस एक्सेप्ट कर लेगी
           yes | buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MatrixCalc-Final-Build
+          name: MatrixCalc-Fixed-Build
           path: bin/*.apk
           
