@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
 
 env:
-  # यह लाइन GitHub को Node.js 24 इस्तेमाल करने के लिए मजबूर करेगी
+  # Node.js 24 की चेतावनी को शांत करने के लिए
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
 jobs:
   build:
-    runs-on: ubuntu-24.04 # हमने Ubuntu का सबसे लेटेस्ट वर्जन (24.04) चुना है
+    runs-on: ubuntu-22.04 # सबसे स्टेबल वर्जन
 
     steps:
       - name: Checkout Code
@@ -20,9 +20,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
       - name: Install System Dependencies
+        # यह वही "बड़ा कोड" है जो सारी कमियों को पूरा करेगा
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -30,18 +31,20 @@ jobs:
             libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
             libavformat-dev libavcodec-dev zlib1g-dev libgstreamer1.0-dev \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good libffi-dev libssl-dev \
-            libtool autoconf automake pkg-config cmake gettext
+            libtool autoconf automake pkg-config cmake gettext libltdl-dev
           
           python3 -m pip install --upgrade pip
-          pip install --user --upgrade Cython==0.29.33 buildozer kivy kivymd
+          # Cython का वर्जन 3 से कम रखना ज़रूरी है
+          pip install --user --upgrade "Cython<3.0" buildozer kivy kivymd
 
       - name: Build with Buildozer
         run: |
-          # 'yes' कमांड अपने आप सारे एंड्रॉइड लाइसेंस स्वीकार कर लेगी
+          # 'yes' कमांड अपने आप सारे लाइसेंस एक्सेप्ट कर लेगी
           yes | buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MatrixApp-Final-APK
+          name: MatrixCalc-Final-Build
           path: bin/*.apk
+          
