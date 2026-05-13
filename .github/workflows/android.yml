@@ -5,22 +5,24 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  # यह लाइन GitHub को Node.js 24 इस्तेमाल करने के लिए मजबूर करेगी
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
+
 jobs:
   build:
-    # स्टेबल वर्जन का उपयोग करें
-    runs-on: ubuntu-22.04 
+    runs-on: ubuntu-24.04 # हमने Ubuntu का सबसे लेटेस्ट वर्जन (24.04) चुना है
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4 # लेटेस्ट v4 का उपयोग (No Deprecation)
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # लेटेस्ट v5 का उपयोग
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install System Dependencies
-        # यहाँ हमने उन सभी पैकेजेस को फिक्स किया है जो Exit code 100 दे रहे थे
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -30,16 +32,16 @@ jobs:
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good libffi-dev libssl-dev \
             libtool autoconf automake pkg-config cmake gettext
           
-          python -m pip install --upgrade pip
+          python3 -m pip install --upgrade pip
           pip install --user --upgrade Cython==0.29.33 buildozer kivy kivymd
 
       - name: Build with Buildozer
         run: |
-          # 'yes' कमांड लाइसेंस को अपने आप स्वीकार करेगी ताकि प्रोसेस रुके नहीं
+          # 'yes' कमांड अपने आप सारे एंड्रॉइड लाइसेंस स्वीकार कर लेगी
           yes | buildozer -v android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4 # लेटेस्ट v4 का उपयोग
+        uses: actions/upload-artifact@v4
         with:
-          name: MatrixCalc-Final-APK
+          name: MatrixApp-Final-APK
           path: bin/*.apk
