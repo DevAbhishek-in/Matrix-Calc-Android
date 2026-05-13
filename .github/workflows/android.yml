@@ -1,48 +1,43 @@
-name: Build Android APK
-
+name: CI
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
 jobs:
   build:
-    # हमने वापस 22.04 कर दिया है क्योंकि यह ज्यादा स्टेबल है
-    runs-on: ubuntu-22.04 
+    runs-on: ubuntu-22.04 # 20.04 अब पुराना हो गया है
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install System Dependencies
+      - name: Get Date
+        id: get-date
         run: |
-          sudo apt-get update
-          # हमने यहाँ से gstreamer हटा दिया है जो 100 एरर दे रहा था
-          sudo apt-get install -y \
-            build-essential git python3-dev ffmpeg libsdl2-dev libsdl2-image-dev \
-            libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
-            libavformat-dev libavcodec-dev zlib1g-dev libffi-dev libssl-dev \
-            libtool autoconf automake pkg-config cmake gettext libltdl-dev
-          
-          python3 -m pip install --upgrade pip
-          # Cython का वर्जन फिक्स कर दिया है
-          pip install --user --upgrade "Cython<3.0" buildozer kivy kivymd
+          echo "date=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Cache Buildozer global directory
+        uses: actions/cache@v4
+        with:
+          path: .buildozer_global
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+
+      - name: Cache Buildozer local directory
+        uses: actions/cache@v4
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
       - name: Build with Buildozer
-        run: |
-          yes | buildozer -v android debug
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: stable
 
-      - name: Upload APK
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: MatrixCalc-Fixed-Build
-          path: bin/*.apk
-          
+          name: package
+          path: bin/*.apk # पाथ को आसान बना दिया है
