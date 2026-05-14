@@ -112,7 +112,7 @@ android.permissions = android.permission.INTERNET, (name=android.permission.WRIT
 android.api = 33
 
 # (int) Minimum API your APK / AAB will support.
-android.minapi = 24
+android.minapi = 21
 
 # (int) Android SDK version to use
 android.sdk = 33
@@ -203,7 +203,7 @@ android.accept_sdk_license = True
 # android.add_resources = my_icons/all-inclusive.png:drawable/all_inclusive.png
 # 2) A directory, here  'legal_icons' must contain resources of one kind
 # android.add_resources = legal_icons:drawable
-# 3) A directory, here 'legal_resources' must contain one or more directories, 
+# 3) A directory, here  'legal_resources' must contain one or more directories, 
 # each of a resource kind:  drawable, xml, etc...
 # android.add_resources = legal_resources
 #android.add_resources =
@@ -405,7 +405,7 @@ ios.codesign.allowed = false
 #ios.media_usage_description = "<APP> needs to access your media in order to <Do X and Y and Z> "
 
 # (str) Justification text to be provided for being able to use local network
-#ios.local_network_usage_description = "<App> needs permissions to <Do X and Y and Z> in your Local Area Network"
+#ios.local_network_usage_description = "<App> needs permissions to <Do X and Y and Z> your Local Area Network"
 
 # (str) Camera Usage justification string.
 #ios.camera_usage_description = "<App> uses Camera to do <X and Y and Z>"
@@ -415,7 +415,7 @@ ios.codesign.allowed = false
 # ios.viewcontroller_based_statusbar_appearance = False
 
 # (str) A Xml String specifying a extension type.
-#ios.app_extensions = [["7zip", "zip"],  ["public.zip-archive"], "org.kivy.myappextensionfile", "<MyCustom> Extension File", "${MACOSX_BUNDLE_ICON_FILE}", "http://mysite.com/myapp/extensions.html"],
+#ios.app_extensions = [["7zip", "zip"],  ["public.zip-archive"], "org.kivy.myappextensionfile", "<MyCustom> Extension File", "${MACOSX_BUNDLE_ICON_FILE}", "http://mysite.com/myapp/extensions.html[...]
 
 # (str) URL pointing to .ipa file to be installed
 # This option should be defined along with `display_image_url` and `full_size_image_url` options.
